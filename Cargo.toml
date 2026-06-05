@@ -1,0 +1,38 @@
+[package]
+name = "rx-tx"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "rxtx"
+path = "src/lib.rs"
+
+[[bin]]
+name = "tx"
+path = "src/bin/tx.rs"
+
+[[bin]]
+name = "rx"
+path = "src/bin/rx.rs"
+
+[[bin]]
+name = "loopback"
+path = "src/bin/loopback.rs"
+
+[dependencies]
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+
+# We pin to the exact main revision the code was written against (0.0.42-dev).
+#
+# We use the SoapySDR backend (`soapy`) rather than seify's native drivers,
+# because seify 0.18's native HackRF driver is RX-only (its TxStreamer::write is
+# a `todo!()`). SoapySDR's HackRF + RTL-SDR modules both support what we need.
+# Requires SoapySDR dev files at build time:  sudo apt install libsoapysdr-dev
+[dependencies.futuresdr]
+git = "https://github.com/FutureSDR/FutureSDR.git"
+rev = "7d5bef383255b42719d7f7ef4f2f57bc9ce2e02e"
+features = ["seify", "soapy"]
+
+[profile.release]
+opt-level = 3
